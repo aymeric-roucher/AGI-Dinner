@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,6 +12,7 @@
             font-family: 'Share Tech Mono', monospace;
             overflow: hidden;
         }
+
         #particles-js {
             position: absolute;
             width: 100%;
@@ -19,29 +21,34 @@
             left: 0;
             z-index: 0;
         }
+
         .content-wrapper {
             position: relative;
             z-index: 1;
         }
+
         .text-glow {
             text-shadow: 0 0 5px rgba(255, 255, 255, 0.2), 0 0 10px rgba(255, 255, 255, 0.2), 0 0 20px rgba(7, 189, 230, 0.5);
         }
+
         .border-glow {
             box-shadow: 0 0 15px rgba(7, 189, 230, 0.2), 0 0 5px rgba(7, 189, 230, 0.3) inset;
             border-color: rgba(7, 189, 230, 0.3);
         }
+
         .highlight {
             color: #07bde6;
         }
     </style>
 </head>
+
 <body class="bg-black text-gray-300">
 
     <div id="particles-js"></div>
 
     <div class="content-wrapper min-h-screen flex items-center justify-center p-4">
         <div class="w-full max-w-5xl border bg-black bg-opacity-75 p-6 md:p-8 rounded-md border-glow">
-            
+
             <div class="text-center mb-6">
                 <h1 id="main-title" class="text-3xl md:text-5xl font-bold text-glow"></h1>
             </div>
@@ -75,21 +82,21 @@
     <script>
         // --- PARTICLES.JS CONFIGURATION ---
         particlesJS('particles-js', {
-          "particles": {
-            "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
-            "color": { "value": "#ffffff" },
-            "shape": { "type": "circle" },
-            "opacity": { "value": 0.5, "random": false },
-            "size": { "value": 2, "random": true },
-            "line_linked": { "enable": true, "distance": 150, "color": "#4A5568", "opacity": 0.4, "width": 1 },
-            "move": { "enable": true, "speed": 1, "direction": "none", "random": false, "straight": false, "out_mode": "out", "bounce": false }
-          },
-          "interactivity": {
-            "detect_on": "canvas",
-            "events": { "onhover": { "enable": true, "mode": "grab" }, "onclick": { "enable": true, "mode": "push" }, "resize": true },
-            "modes": { "grab": { "distance": 140, "line_linked": { "opacity": 1 } }, "bubble": {}, "repulse": {}, "push": { "particles_nb": 4 }, "remove": {} }
-          },
-          "retina_detect": true
+            "particles": {
+                "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
+                "color": { "value": "#ffffff" },
+                "shape": { "type": "circle" },
+                "opacity": { "value": 0.5, "random": false },
+                "size": { "value": 2, "random": true },
+                "line_linked": { "enable": true, "distance": 150, "color": "#4A5568", "opacity": 0.4, "width": 1 },
+                "move": { "enable": true, "speed": 1, "direction": "none", "random": false, "straight": false, "out_mode": "out", "bounce": false }
+            },
+            "interactivity": {
+                "detect_on": "canvas",
+                "events": { "onhover": { "enable": true, "mode": "grab" }, "onclick": { "enable": true, "mode": "push" }, "resize": true },
+                "modes": { "grab": { "distance": 140, "line_linked": { "opacity": 1 } }, "bubble": {}, "repulse": {}, "push": { "particles_nb": 4 }, "remove": {} }
+            },
+            "retina_detect": true
         });
 
         // --- TEXT DECRYPTION ANIMATION ---
@@ -97,14 +104,14 @@
 
         function scrambleText(element, final_text, options = {}) {
             const { speed = 50, delay = 0, scrambleChars = 10 } = options;
-            
+
             let i = 0;
             let interval;
 
             const scramble = (scramble_amount) => {
-                if(scramble_amount <= 0) {
+                if (scramble_amount <= 0) {
                     element.innerHTML = final_text;
-                    if(i >= final_text.length) {
+                    if (i >= final_text.length) {
                         clearInterval(interval);
                         return;
                     }
@@ -115,16 +122,16 @@
                 let scrambled_text = "";
                 for (let j = 0; j < final_text.length; j++) {
                     if (final_text[j] === '<' || final_text[j] === '>') {
-                       // skip scrambling html tags
-                       let tag = '';
-                       let k = j;
-                       while(k < final_text.length && final_text[k-1] !== '>') {
-                          tag += final_text[k];
-                          k++;
-                       }
-                       scrambled_text += tag;
-                       j = k -1;
-                       continue;
+                        // skip scrambling html tags
+                        let tag = '';
+                        let k = j;
+                        while (k < final_text.length && final_text[k - 1] !== '>') {
+                            tag += final_text[k];
+                            k++;
+                        }
+                        scrambled_text += tag;
+                        j = k - 1;
+                        continue;
                     }
 
                     if (j < i) {
@@ -136,38 +143,38 @@
                 element.innerHTML = scrambled_text;
                 setTimeout(() => scramble(scramble_amount - 1), speed);
             }
-            
+
             setTimeout(() => {
-                 interval = setInterval(() => {
+                interval = setInterval(() => {
                     scramble(scrambleChars);
-                 }, speed);
+                }, speed);
             }, delay);
         }
 
         function typeText(element, final_text, speed = 50, delay = 0) {
-             let i = 0;
-             element.innerHTML = "";
-             setTimeout(() => {
+            let i = 0;
+            element.innerHTML = "";
+            setTimeout(() => {
                 const interval = setInterval(() => {
                     if (i < final_text.length) {
                         let char = final_text.charAt(i);
                         // Handle HTML tags
                         if (char === '<') {
                             let tag = '';
-                            while(i < final_text.length && final_text.charAt(i-1) !== '>') {
+                            while (i < final_text.length && final_text.charAt(i - 1) !== '>') {
                                 tag += final_text.charAt(i);
                                 i++;
                             }
                             element.innerHTML += tag;
                         } else {
-                           element.innerHTML += char;
-                           i++;
+                            element.innerHTML += char;
+                            i++;
                         }
                     } else {
                         clearInterval(interval);
                     }
                 }, speed);
-             }, delay);
+            }, delay);
         }
 
         // --- INITIATE ANIMATIONS ---
@@ -182,14 +189,15 @@
         const details1Text = '<span class="highlight">// LOCATION:</span> PARIS, FR [CLASSIFIED]';
         const details2Text = '<span class="highlight">// DATE:</span> 2025.11.27';
         const details3Text = '<span class="highlight">// OBJECTIVE:</span> Redefine the art of culinary creation.';
-
-        scrambleText(titleEl, titleText, { speed: 40, delay: 0, scrambleChars: 5});
+        const details4Text = '<span class="highlight">// TOPICS:</span> A Plan Messmer for French AI? | why not an AI Residency in Paris? | Creating a summer Bootcamp top make EU decision-makers more AI-Pilled';
+        scrambleText(titleEl, titleText, { speed: 40, delay: 0, scrambleChars: 5 });
         typeText(dossierEl, dossierText, 20, 1500);
         typeText(details1El, details1Text, 30, 3500);
         typeText(details2El, details2Text, 30, 4000);
         typeText(details3El, details3Text, 30, 4500);
-
+        typeText(details4El, details4Text, 30, 5000);
     </script>
 
 </body>
+
 </html>
