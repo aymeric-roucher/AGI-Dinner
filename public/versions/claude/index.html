@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AGI DINNER - CLASSIFIED</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000;
+            color: #0f0;
+            font-family: 'Share Tech Mono', monospace;
+            overflow: hidden;
+            cursor: crosshair;
+            height: 100vh;
+        }
+
+        /* Scanline Effect */
+        .scanline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom,
+                    rgba(255, 255, 255, 0) 50%,
+                    rgba(0, 255, 0, 0.02) 50%);
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 9999;
+            animation: scanline 8s linear infinite;
+        }
+
+        @keyframes scanline {
+            0% {
+                transform: translateY(0);
+            }
+
+            100% {
+                transform: translateY(4px);
+            }
+        }
+
+        /* CRT Flicker */
+        .crt-flicker {
+            animation: flicker 0.15s infinite;
+        }
+
+        @keyframes flicker {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.97;
+            }
+        }
+
+        /* Vignette */
+        .vignette {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            box-shadow: inset 0 0 200px rgba(0, 0, 0, 0.9);
+            pointer-events: none;
+            z-index: 9998;
+        }
+
+        /* Grid Background */
+        .grid-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                linear-gradient(rgba(0, 255, 0, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 0, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Glitch Text */
+        .glitch {
+            position: relative;
+            font-family: 'Orbitron', monospace;
+            font-weight: 900;
+            text-shadow:
+                0 0 10px #0f0,
+                0 0 20px #0f0,
+                0 0 30px #0f0;
+        }
+
+        .glitch::before,
+        .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .glitch::before {
+            animation: glitch-1 2.5s infinite;
+            color: #00ff00;
+            z-index: -1;
+        }
+
+        .glitch::after {
+            animation: glitch-2 3s infinite;
+            color: #ff0000;
+            z-index: -2;
+        }
+
+        @keyframes glitch-1 {
+
+            0%,
+            100% {
+                transform: translate(0);
+            }
+
+            20% {
+                transform: translate(-2px, 2px);
+            }
+
+            40% {
+                transform: translate(-2px, -2px);
+            }
+
+            60% {
+                transform: translate(2px, 2px);
+            }
+
+            80% {
+                transform: translate(2px, -2px);
+            }
+        }
+
+        @keyframes glitch-2 {
+
+            0%,
+            100% {
+                transform: translate(0);
+            }
+
+            20% {
+                transform: translate(2px, -2px);
+            }
+
+            40% {
+                transform: translate(2px, 2px);
+            }
+
+            60% {
+                transform: translate(-2px, -2px);
+            }
+
+            80% {
+                transform: translate(-2px, 2px);
+            }
+        }
+
+        /* Typing Animation */
+        .typing {
+            overflow: hidden;
+            border-right: 2px solid #0f0;
+            white-space: nowrap;
+            animation: typing 3s steps(40, end), blink 0.75s step-end infinite;
+        }
+
+        @keyframes typing {
+            from {
+                width: 0;
+            }
+
+            to {
+                width: 100%;
+            }
+        }
+
+        @keyframes blink {
+
+            from,
+            to {
+                border-color: transparent;
+            }
+
+            50% {
+                border-color: #0f0;
+            }
+        }
+
+        /* Radar Pulse */
+        .radar-pulse {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            border: 2px solid rgba(0, 255, 0, 0.3);
+            border-radius: 50%;
+        }
+
+        .radar-pulse::before,
+        .radar-pulse::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+            border: 2px solid rgba(0, 255, 0, 0.6);
+            border-radius: 50%;
+            animation: radar-pulse 2s ease-out infinite;
+        }
+
+        .radar-pulse::after {
+            animation-delay: 1s;
+        }
+
+        @keyframes radar-pulse {
+            0% {
+                width: 100%;
+                height: 100%;
+                opacity: 1;
+            }
+
+            100% {
+                width: 200%;
+                height: 200%;
+                opacity: 0;
+            }
+        }
+
+        /* Holographic effect */
+        .holographic {
+            background: linear-gradient(45deg,
+                    rgba(0, 255, 0, 0.1) 0%,
+                    rgba(0, 255, 0, 0.05) 50%,
+                    rgba(0, 255, 0, 0.1) 100%);
+            border: 1px solid rgba(0, 255, 0, 0.5);
+            box-shadow:
+                0 0 20px rgba(0, 255, 0, 0.3),
+                inset 0 0 20px rgba(0, 255, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .holographic:hover {
+            box-shadow:
+                0 0 40px rgba(0, 255, 0, 0.5),
+                inset 0 0 40px rgba(0, 255, 0, 0.2);
+            transform: translateY(-2px);
+            transition: all 0.3s ease;
+        }
+
+        /* Decrypt Animation */
+        .encrypted {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .encrypted::before {
+            content: attr(data-encrypted);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            color: #0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: decrypt 2s ease-in-out forwards;
+            animation-delay: 1s;
+        }
+
+        @keyframes decrypt {
+            0% {
+                transform: translateX(0);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+        }
+
+        /* Boot Sequence */
+        .boot-sequence {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            color: #0f0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            font-size: 14px;
+            animation: fadeOut 0.5s ease-in-out 1s forwards;
+        }
+
+        @keyframes fadeOut {
+            to {
+                opacity: 0;
+                visibility: hidden;
+            }
+        }
+
+        /* 3D Canvas */
+        #canvas-3d {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 0;
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
+        /* Letter Highlighting */
+        .agi-letter {
+            font-size: 1.5em;
+            font-weight: 900;
+            color: #00ff00;
+            text-shadow:
+                0 0 10px #00ff00,
+                0 0 20px #00ff00,
+                0 0 30px #00ff00,
+                0 0 40px #00ff00;
+        }
+
+        /* Content Fade In */
+        .fade-in {
+            animation: fadeIn 1.5s ease-in-out forwards;
+            opacity: 0;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Classified Stamp */
+        .classified-stamp {
+            border: 3px solid #ff0000;
+            color: #ff0000;
+            padding: 10px 20px;
+            transform: rotate(-15deg);
+            font-weight: bold;
+            font-size: 1.5rem;
+            letter-spacing: 0.3em;
+            text-shadow: 0 0 10px #ff0000;
+            animation: stamp-pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes stamp-pulse {
+
+            0%,
+            100% {
+                opacity: 0.8;
+            }
+
+            50% {
+                opacity: 1;
+            }
+        }
+
+        /* Matrix Rain Background */
+        .matrix-rain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.1;
+        }
+    </style>
+</head>
+
+<body class="crt-flicker">
+    <!-- Boot Sequence -->
+    <div class="boot-sequence" id="bootSequence">
+        <div class="mb-4">INITIALIZING CLASSIFIED SYSTEM...</div>
+        <div class="mb-2">LOADING SECURE PROTOCOLS... [OK]</div>
+        <div class="mb-2">DECRYPTING INVITATION DATA... [OK]</div>
+        <div class="mb-2">ESTABLISHING SECURE CONNECTION... [OK]</div>
+        <div class="mt-4">ACCESS GRANTED</div>
+    </div>
+
+    <!-- Effects Overlays -->
+    <div class="scanline"></div>
+    <div class="vignette"></div>
+    <div class="grid-bg"></div>
+    <canvas class="matrix-rain" id="matrixCanvas"></canvas>
+
+    <!-- 3D Canvas -->
+    <canvas id="canvas-3d"></canvas>
+
+    <!-- Main Content -->
+    <div class="relative z-10 h-screen flex items-center justify-center p-6">
+        <div class="w-full max-w-6xl grid grid-cols-2 gap-8 items-center">
+
+            <!-- Left Column: Title -->
+            <div class="fade-in" style="animation-delay: 1.5s;">
+                <div class="text-xs mb-4 text-green-600">
+                    CLASSIFIED // DOC ID: AGI-2025-11-27
+                </div>
+                <h1 class="text-7xl font-bold mb-2 leading-none">
+                    <span class="agi-letter">A.G.I.</span>
+                </h1>
+                <div class="text-2xl mb-8 text-green-300">
+                    [ OPERATION: DINNER ]
+                </div>
+
+                <div class="holographic p-6 text-sm space-y-2">
+                    <div class="encrypted" data-encrypted="████████">
+                        <span class="text-green-400">LOCATION:</span> Paris, France
+                    </div>
+                    <div class="encrypted" data-encrypted="████████">
+                        <span class="text-green-400">DATE:</span> 27 November 2025
+                    </div>
+                    <div class="encrypted" data-encrypted="████████">
+                        <span class="text-green-400">TIME:</span> TBD
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Mission Brief -->
+            <div class="fade-in" style="animation-delay: 1.7s;">
+                <div class="classified-stamp absolute top-8 right-8 text-sm px-4 py-2">
+                    CLASSIFIED
+                </div>
+
+                <div class="holographic p-6 mb-4">
+                    <div class="text-red-500 font-bold text-sm mb-3 border-b border-red-900 pb-2">
+                        MISSION BRIEFING
+                    </div>
+                    <div class="text-xs leading-relaxed">
+                        Convergence of culinary excellence and artificial intelligence discourse. Attendees should
+                        prepare for intellectual stimulation and exceptional gastronomic experiences.
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-3">
+                    <div class="holographic p-3 text-center text-xs">
+                        <div class="text-green-600 mb-1">CLEARANCE</div>
+                        <div class="font-bold">ALPHA</div>
+                    </div>
+                    <div class="holographic p-3 text-center text-xs">
+                        <div class="text-green-600 mb-1">PRIORITY</div>
+                        <div class="font-bold">HIGH</div>
+                    </div>
+                    <div class="holographic p-3 text-center text-xs">
+                        <div class="text-green-600 mb-1">STATUS</div>
+                        <div class="font-bold">ACTIVE</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Matrix Rain Effect
+        const matrixCanvas = document.getElementById('matrixCanvas');
+        const matrixCtx = matrixCanvas.getContext('2d');
+
+        matrixCanvas.width = window.innerWidth;
+        matrixCanvas.height = window.innerHeight;
+
+        const matrix = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()";
+        const fontSize = 14;
+        const columns = matrixCanvas.width / fontSize;
+        const drops = Array(Math.floor(columns)).fill(1);
+
+        function drawMatrix() {
+            matrixCtx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            matrixCtx.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
+
+            matrixCtx.fillStyle = '#0f0';
+            matrixCtx.font = fontSize + 'px monospace';
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = matrix[Math.floor(Math.random() * matrix.length)];
+                matrixCtx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                if (drops[i] * fontSize > matrixCanvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+
+        setInterval(drawMatrix, 35);
+
+        // Three.js 3D Wireframe
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({
+            canvas: document.getElementById('canvas-3d'),
+            alpha: true,
+            antialias: true
+        });
+
+        renderer.setSize(600, 600);
+        camera.position.z = 5;
+
+        // Create rotating wireframe plate and utensils
+        const plateGeometry = new THREE.TorusGeometry(1.5, 0.05, 16, 100);
+        const plateMaterial = new THREE.MeshBasicMaterial({
+            color: 0x00ff00,
+            wireframe: true
+        });
+        const plate = new THREE.Mesh(plateGeometry, plateMaterial);
+        scene.add(plate);
+
+        // Fork
+        const forkGroup = new THREE.Group();
+        const forkHandle = new THREE.BoxGeometry(0.1, 1.5, 0.05);
+        const forkMaterial = new THREE.MeshBasicMaterial({
+            color: 0x00ff00,
+            wireframe: true
+        });
+        const handle = new THREE.Mesh(forkHandle, forkMaterial);
+        forkGroup.add(handle);
+
+        for (let i = 0; i < 4; i++) {
+            const prong = new THREE.BoxGeometry(0.05, 0.5, 0.05);
+            const prongMesh = new THREE.Mesh(prong, forkMaterial);
+            prongMesh.position.set(-0.15 + i * 0.1, 1, 0);
+            forkGroup.add(prongMesh);
+        }
+
+        forkGroup.position.set(-2, 0, 0);
+        forkGroup.rotation.z = Math.PI / 4;
+        scene.add(forkGroup);
+
+        // Knife
+        const knifeGroup = new THREE.Group();
+        const knifeHandle = new THREE.BoxGeometry(0.1, 1, 0.05);
+        const knifeHandleMesh = new THREE.Mesh(knifeHandle, forkMaterial);
+        knifeGroup.add(knifeHandleMesh);
+
+        const blade = new THREE.BoxGeometry(0.05, 1.5, 0.01);
+        const bladeMesh = new THREE.Mesh(blade, forkMaterial);
+        bladeMesh.position.set(0, 1.25, 0);
+        knifeGroup.add(bladeMesh);
+
+        knifeGroup.position.set(2, 0, 0);
+        knifeGroup.rotation.z = -Math.PI / 4;
+        scene.add(knifeGroup);
+
+        // Animation
+        function animate() {
+            requestAnimationFrame(animate);
+
+            plate.rotation.z += 0.005;
+            forkGroup.rotation.y += 0.01;
+            knifeGroup.rotation.y += 0.01;
+
+            // Subtle floating effect
+            plate.position.y = Math.sin(Date.now() * 0.001) * 0.2;
+            forkGroup.position.y = Math.sin(Date.now() * 0.001 + 1) * 0.2;
+            knifeGroup.position.y = Math.sin(Date.now() * 0.001 + 2) * 0.2;
+
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        // Window resize handler
+        window.addEventListener('resize', () => {
+            matrixCanvas.width = window.innerWidth;
+            matrixCanvas.height = window.innerHeight;
+
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+        });
+
+        // Remove boot sequence after animation
+        setTimeout(() => {
+            document.getElementById('bootSequence').style.display = 'none';
+        }, 1500);
+
+        // Cursor tracker for interactive effect
+        document.addEventListener('mousemove', (e) => {
+            const mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+            const mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
+
+            camera.position.x = mouseX * 0.5;
+            camera.position.y = mouseY * 0.5;
+        });
+    </script>
+</body>
+
+</html>
