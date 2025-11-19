@@ -7,7 +7,7 @@ const models = [
   { value: 'gemini', label: 'Gemini // Google' },
 ];
 
-const defaultModel = 'codex';
+const defaultModel = 'codex'; // default display: Codex // OpenAI
 
 function ModelSelector({ value, onChange }) {
   return (
