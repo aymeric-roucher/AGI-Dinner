@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
 import Giscus from '@giscus/react';
+import { useEffect, useRef, useState } from 'react';
 
 const models = [
   { value: 'codex', label: 'Codex // OpenAI' },
@@ -84,7 +84,7 @@ function CommentsPanel() {
         categoryId="DIC_kwDOQYuBxc4Cx9jG"
         mapping="pathname"
         strict="0"
-        reactionsEnabled="1"
+        reactionsEnabled="0"
         emitMetadata="0"
         inputPosition="bottom"
         theme="dark"
