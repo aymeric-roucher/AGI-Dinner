@@ -29,6 +29,7 @@ function ModelSelector({ value, onChange }) {
 
 function ModelFrame({ model }) {
   const iframeRef = useRef(null);
+  const versionUrl = new URL(`versions/${model}/index.html`, import.meta.env.BASE_URL).toString();
 
   useEffect(() => {
     const iframe = iframeRef.current;
@@ -62,7 +63,7 @@ function ModelFrame({ model }) {
       <iframe
         key={model}
         ref={iframeRef}
-        src={`/versions/${model}/index.html`}
+        src={versionUrl}
         title={`${model} invitation`}
         loading="lazy"
         className="w-full border-none block"
