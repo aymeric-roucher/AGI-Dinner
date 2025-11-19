@@ -29,7 +29,7 @@ function ModelSelector({ value, onChange }) {
 
 function ModelFrame({ model }) {
   const iframeRef = useRef(null);
-  const versionUrl = new URL(`versions/${model}/index.html`, import.meta.env.BASE_URL).toString();
+  const versionUrl = `${import.meta.env.BASE_URL}versions/${model}/index.html`;
 
   useEffect(() => {
     const iframe = iframeRef.current;
